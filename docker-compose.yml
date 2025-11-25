@@ -1,0 +1,36 @@
+## This `docker-compose.yml` is used only for local development and tests. 
+
+services:
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory false"
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+    networks:
+      - backend
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx512m"
+
+  redis:
+    image: redis:8.0-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend
+
+volumes:
+  dynamodb-data:
+    name: dynamodb_data
+  redis-data:
+    name: redis_data
+
+networks:
+  backend:
+    name: backend_network

@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ESNext"
+    ],
+    "types": [
+      "bun-types"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": [
+        "packages/core/*"
+      ],
+      "@iam/*": [
+        "packages/iam/*"
+      ],
+      "@business/*": [
+        "packages/business/*"
+      ],
+      "@shared/*": [
+        "packages/shared/*"
+      ]
+    }
+  },
+  "include": [
+    "__test__/**/*",
+    "packages/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
+}

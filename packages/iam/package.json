@@ -1,0 +1,10 @@
+{
+  "name": "@belezeiro/iam",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@belezeiro/core": "workspace:*",
+    "jose": "^5.9.6",
+    "zod": "^3.23.8"
+  }
+}

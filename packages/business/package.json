@@ -1,0 +1,9 @@
+{
+  "name": "@belezeiro/business",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@belezeiro/core": "workspace:*",
+    "zod": "^3.23.8"
+  }
+}
