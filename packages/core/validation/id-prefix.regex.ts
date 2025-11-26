@@ -1,1 +1,0 @@
-export const IDPrefixRegex = /[^a-zA-Z]/g

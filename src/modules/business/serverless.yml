@@ -1,0 +1,144 @@
+# Business Module - Serverless Configuration
+# Handles business and unit management
+
+service: belezeiro-business
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: provided.al2
+  architecture: arm64
+  region: ${param:region}
+  stage: ${param:stage}
+
+  # Bun Layer (Update with your published layer ARN)
+  layers:
+    - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:bun:1
+
+  # Global environment variables for all functions
+  environment:
+    # Core Module Envs (inherited from serverless-compose.yml params)
+    NODE_ENV: ${param:nodeEnv}
+    UPSTASH_REDIS_REST_URL: ${param:upstashRedisUrl}
+    UPSTASH_REDIS_REST_TOKEN: ${param:upstashRedisToken}
+    EVENT_BUS_TYPE: ${param:eventBusType}
+    EVENT_BUS_RETRY_ATTEMPTS: ${param:eventBusRetryAttempts}
+    EVENT_BUS_RETRY_DELAY: ${param:eventBusRetryDelay}
+    ID_GENERATOR_TYPE: ${param:idGeneratorType}
+    CACHE_TTL: ${param:cacheTtl}
+    CACHE_MAX_SIZE: ${param:cacheMaxSize}
+
+    # Business Module Envs (specific to this module, loaded from .env)
+    DATABASE_URL: ${env:DATABASE_URL}
+    DATABASE_POOL_MIN: ${env:DATABASE_POOL_MIN}
+    DATABASE_POOL_MAX: ${env:DATABASE_POOL_MAX}
+    MAX_UNITS_PER_BUSINESS: ${env:MAX_UNITS_PER_BUSINESS}
+    BUSINESS_NAME_MAX_LENGTH: ${env:BUSINESS_NAME_MAX_LENGTH}
+
+  # IAM Permissions
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - rds-data:ExecuteStatement
+            - rds-data:BatchExecuteStatement
+          Resource:
+            - !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:*
+
+functions:
+  # Create Business
+  create-business:
+    handler: handlers/create-business.fetch
+    description: Create a new business
+    memorySize: 512
+    timeout: 30
+    events:
+      - httpApi:
+          path: /business
+          method: POST
+    environment:
+      FUNCTION_NAME: create-business
+
+  # Update Business
+  update-business:
+    handler: handlers/update-business.fetch
+    description: Update an existing business
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          path: /business/{id}
+          method: PUT
+    environment:
+      FUNCTION_NAME: update-business
+
+  # Delete Business
+  delete-business:
+    handler: handlers/delete-business.fetch
+    description: Delete a business
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          path: /business/{id}
+          method: DELETE
+    environment:
+      FUNCTION_NAME: delete-business
+
+  # Create Unit
+  create-unit:
+    handler: handlers/create-unit.fetch
+    description: Create a new unit for a business
+    memorySize: 512
+    timeout: 30
+    events:
+      - httpApi:
+          path: /business/{businessId}/units
+          method: POST
+    environment:
+      FUNCTION_NAME: create-unit
+
+  # Update Unit
+  update-unit:
+    handler: handlers/update-unit.fetch
+    description: Update an existing unit
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          path: /business/{businessId}/units/{unitId}
+          method: PUT
+    environment:
+      FUNCTION_NAME: update-unit
+
+  # Delete Unit
+  delete-unit:
+    handler: handlers/delete-unit.fetch
+    description: Delete a unit
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          path: /business/{businessId}/units/{unitId}
+          method: DELETE
+    environment:
+      FUNCTION_NAME: delete-unit
+
+# Package configuration
+package:
+  individually: true
+  patterns:
+    - '!node_modules/**'
+    - '!.git/**'
+    - '!.env*'
+    - '!*.md'
+    - 'handlers/**'
+    - 'app/**'
+    - 'domain/**'
+    - 'infra/**'
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-plugin-typescript

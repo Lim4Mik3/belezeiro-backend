@@ -20,22 +20,22 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": [
-        "packages/core/*"
+        "modules/_core_/*"
       ],
       "@iam/*": [
-        "packages/iam/*"
+        "modules/iam/*"
       ],
       "@business/*": [
-        "packages/business/*"
+        "modules/business/*"
       ],
       "@shared/*": [
-        "packages/shared/*"
+        "modules/shared/*"
       ]
     }
   },
   "include": [
     "__test__/**/*",
-    "packages/**/*"
+    "modules/**/*"
   ],
   "exclude": [
     "node_modules",

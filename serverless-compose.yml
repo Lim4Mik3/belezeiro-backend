@@ -1,3 +1,27 @@
+params:
+  default:
+    # Core Module - Shared environment variables (loaded from .env via serverless-dotenv-plugin)
+    nodeEnv: ${env:NODE_ENV}
+    upstashRedisUrl: ${env:UPSTASH_REDIS_REST_URL}
+    upstashRedisToken: ${env:UPSTASH_REDIS_REST_TOKEN}
+    eventBusType: ${env:EVENT_BUS_TYPE}
+    eventBusRetryAttempts: ${env:EVENT_BUS_RETRY_ATTEMPTS}
+    eventBusRetryDelay: ${env:EVENT_BUS_RETRY_DELAY}
+    idGeneratorType: ${env:ID_GENERATOR_TYPE}
+    cacheTtl: ${env:CACHE_TTL}
+    cacheMaxSize: ${env:CACHE_MAX_SIZE}
+
 services:
   iam:
-    path: ./packages/iam
+    path: packages/iam
+    params:
+      stage: 'dev'
+      region: ${opt:region, 'us-east-1'}
+
+  business:
+    path: packages/business
+    params:
+      stage: 'dev'
+      region: ${opt:region, 'us-east-1'}
+    dependsOn:
+      - iam

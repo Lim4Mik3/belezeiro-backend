@@ -1,0 +1,50 @@
+service: belezeiro-iam
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  architecture: arm64
+  region: us-east-2
+  stage: dev
+
+functions:
+  iam__authenticate-google:
+    handler: lambdas/authenticate-google.handler
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          path: /auth/authenticate-google
+          method: POST
+
+build:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: false
+    platform: node
+    target: node22
+
+    treeShaking: true
+    keepNames: false
+
+    format: esm
+
+    external:
+      - aws-sdk
+
+package:
+  individually: true
+  patterns:
+    - '!node_modules/**'
+    - '!**/*.test.ts'
+    - '!**/*.spec.ts'
+    - '!coverage/**'
+    - '!tsconfig.json'
+    - '!bun.lockb'
+    - '!*.md'
+    - '!*.config.*'
+
+plugins:
+  - serverless-dotenv-plugin
