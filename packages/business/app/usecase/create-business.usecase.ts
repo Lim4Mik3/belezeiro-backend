@@ -1,5 +1,5 @@
 import { IEventBus } from "@core/bus/i-event-bus";
-import { IBusinessRepository } from "../contracts/repositories/i-business-repository";
+import { IBusinessRepository } from '@core/app/contracts/repositories/i-business-repository';
 import { BusinessEntity } from "@business/domain/entities/business-entity";
 import { UnitEntity } from "@business/domain/entities/unit-entity";
 
@@ -12,17 +12,16 @@ class UseCase {
   async execute(input: UseCase.Input): Promise<UseCase.Output> {
     const business = new BusinessEntity({
       name: input.name,
+      createdByUserId: input.userId,
       units: []
     });
 
-    input.units.map(unit => {
-      business.createUnit(
-        new UnitEntity({
-          name: unit.name,
-          business_id: business.id
-        })
-      )
-    });
+    business.createUnit(
+      new UnitEntity({
+        name: input.unit.name,
+        business_id: business.id
+      })
+    )
 
     // Persistir
     await this.BusinessRepository.create(business);
@@ -43,10 +42,11 @@ class UseCase {
 
 namespace UseCase {
   export type Input = {
+    userId: string;
     name: string;
-    units: Array<{
+    unit: {
       name: string;
-    }>;
+    }
   }
 
   export type Output = {

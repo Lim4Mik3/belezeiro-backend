@@ -1,28 +1,27 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { makeJWTService } from "@iam/main/factories/services/make-jwt-service.factory";
+import { AuthorizationGuard } from "@core/infra/middlewares/authorization-guard";
+import { IAuthzSnapshot } from "@core/app/contracts/i-authz-snapshot";
 
 export async function authMiddleware(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
+  let token: string | undefined;
+
+  const sessionCookie = request.cookies.session;
+  if (sessionCookie) {
+    token = sessionCookie;
+  }
+
+  if (!token) {
+    return reply.status(401).send({ error: "Missing authentication token" });
+  }
+
   try {
-    const authHeader = request.headers.authorization;
+    const { userId, permissions } = await AuthorizationGuard({ token });
 
-    if (!authHeader) {
-      return reply.status(401).send({ error: "Missing authorization header" });
-    }
-
-    const [, token] = authHeader.split(" ");
-
-    if (!token) {
-      return reply.status(401).send({ error: "Invalid authorization format" });
-    }
-
-    const jwtService = makeJWTService();
-    const payload = await jwtService.verify(token);
-
-    // Adiciona o userId ao request
-    request.userId = payload.sub;
+    request.userId = userId;
+    request.permissions = permissions;
   } catch (error) {
     return reply.status(401).send({ error: "Invalid token" });
   }
@@ -32,5 +31,6 @@ export async function authMiddleware(
 declare module "fastify" {
   interface FastifyRequest {
     userId?: string;
+    permissions: IAuthzSnapshot;
   }
 }

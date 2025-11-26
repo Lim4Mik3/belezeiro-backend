@@ -1,11 +1,11 @@
-import { IUserRepository } from "@iam/app/contracts/repositories/i-user-repository";
-import { InMemoryUserRepository } from "@iam/infra/repositories/in-memory-user-repository";
+import { IUserRepository } from '@core/app/contracts/repositories/i-user-repository';
+import { makeUserRepository as makeUserRepositoryCore } from '@core/main/factories/repositories';
 
 let instance: IUserRepository | null = null;
 
 export function makeUserRepository(): IUserRepository {
   if (!instance) {
-    instance = new InMemoryUserRepository();
+    instance = makeUserRepositoryCore();
   }
   return instance;
 }

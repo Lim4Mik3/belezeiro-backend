@@ -1,8 +1,11 @@
 import { IEventBus } from "@core/bus/i-event-bus";
-import { IUnitRepository } from "../contracts/repositories/i-unit-repository";
+import { IBusinessRepository } from '@core/app/contracts/repositories/i-business-repository';
+import { IUnitRepository } from '@core/app/contracts/repositories/i-unit-repository';
+import { BusinessNotFoundError, UnitNotFoundError } from "@business/domain/errors";
 
 class UseCase {
   constructor(
+    private BusinessRepository: IBusinessRepository,
     private UnitRepository: IUnitRepository,
     private EventBus: IEventBus,
   ) { }
@@ -11,24 +14,30 @@ class UseCase {
     const { unitId } = input;
 
     const unit = await this.UnitRepository.findById(unitId);
-
     if (!unit) {
-      throw new Error("Unit not found");
+      throw new UnitNotFoundError();
     }
 
-    // Deletar
-    await this.UnitRepository.delete(unitId);
-
-    // Emitir eventos de domínio (se houver)
-    const events = unit.getDomainEvents();
-    for (const event of events) {
-      await this.EventBus.publish(event);
+    const business = await this.BusinessRepository.findById(unit.businessId);
+    if (!business) {
+      throw new BusinessNotFoundError();
     }
+
+    business.deleteUnit(unitId);
+    await this.BusinessRepository.update(business);
+
+    await this.UnitRepository.delete(unit.id);
+
+    await this.EventBus.publishBatch([
+      ...business.getDomainEvents(),
+      ...unit.getDomainEvents(),
+    ])
+
+    business.clearDomainEvents();
     unit.clearDomainEvents();
 
     return {
       success: true,
-      id: unitId
     };
   }
 }
@@ -40,7 +49,6 @@ namespace UseCase {
 
   export type Output = {
     success: boolean;
-    id: string;
   }
 }
 

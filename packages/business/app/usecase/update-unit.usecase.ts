@@ -1,8 +1,11 @@
 import { IEventBus } from "@core/bus/i-event-bus";
-import { IUnitRepository } from "../contracts/repositories/i-unit-repository";
+import { IBusinessRepository } from '@core/app/contracts/repositories/i-business-repository';
+import { IUnitRepository } from '@core/app/contracts/repositories/i-unit-repository';
+import { BusinessNotFoundError, UnitNotFoundError } from "@business/domain/errors";
 
 class UseCase {
   constructor(
+    private BusinessRepository: IBusinessRepository,
     private UnitRepository: IUnitRepository,
     private EventBus: IEventBus,
   ) { }
@@ -10,23 +13,36 @@ class UseCase {
   async execute(input: UseCase.Input): Promise<UseCase.Output> {
     const { unitId, name } = input;
 
+    // Buscar a unit para obter o businessId
     const unit = await this.UnitRepository.findById(unitId);
-
     if (!unit) {
-      throw new Error("Unit not found");
+      throw new UnitNotFoundError();
     }
 
-    // Atualizar nome se fornecido
+    // Buscar o business (agregado raiz)
+    const business = await this.BusinessRepository.findById(unit.businessId);
+    if (!business) {
+      throw new BusinessNotFoundError();
+    }
+
+    // Atualizar unit através do agregado business
     if (name) {
-      unit.updateName(name);
+      business.updateUnit(unitId, name);
     }
 
-    // Persistir
-    await this.UnitRepository.update(unit);
+    // Persistir o agregado (que também salva as units)
+    await this.BusinessRepository.update(business);
 
-    // Emitir eventos de domínio (se houver)
-    const events = unit.getDomainEvents();
-    for (const event of events) {
+    // Emitir eventos de domínio do business
+    const businessEvents = business.getDomainEvents();
+    for (const event of businessEvents) {
+      await this.EventBus.publish(event);
+    }
+    business.clearDomainEvents();
+
+    // Emitir eventos de domínio da unit
+    const unitEvents = unit.getDomainEvents();
+    for (const event of unitEvents) {
       await this.EventBus.publish(event);
     }
     unit.clearDomainEvents();

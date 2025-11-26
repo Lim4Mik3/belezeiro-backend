@@ -12,10 +12,18 @@ const envGlobalSchema = z.object({
   // Database
   DATABASE_URL: z.string().url(),
 
-  // Redis
+  // Redis Local
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.string().default("6379").transform(Number),
   REDIS_PASSWORD: z.string().optional(),
+
+  // Upstash Redis
+  UPSTASH_REDIS_REST_URL: z.string(),
+  UPSTASH_REDIS_REST_TOKEN: z.string(),
+
+  // MongoDB
+  MONGODB_URL: z.string().url().default("mongodb://admin:admin123@localhost:27017"),
+  MONGODB_DATABASE: z.string().default("belezeiro"),
 
   // JWT
   JWT_SECRET: z.string().min(32, "JWT secret must be at least 32 characters"),
@@ -23,6 +31,9 @@ const envGlobalSchema = z.object({
 
   // API
   API_VERSION: z.string().default("v1"),
+
+  // Repository
+  REPOSITORY_TYPE: z.enum(["mongodb", "in-memory"]).default("mongodb"),
 });
 
 export type EnvGlobal = z.infer<typeof envGlobalSchema>;

@@ -1,11 +1,11 @@
-import { IUnitRepository } from "@business/app/contracts/repositories/i-unit-repository";
-import { InMemoryUnitRepository } from "@business/infra/repositories/in-memory-unit-repository";
+import { IUnitRepository } from '@core/app/contracts/repositories/i-unit-repository';
+import { makeUnitRepository as makeUnitRepositoryCore } from '@core/main/factories/repositories';
 
 let instance: IUnitRepository | null = null;
 
 export function makeUnitRepository(): IUnitRepository {
   if (!instance) {
-    instance = new InMemoryUnitRepository();
+    instance = makeUnitRepositoryCore();
   }
   return instance;
 }

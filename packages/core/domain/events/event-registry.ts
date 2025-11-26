@@ -25,34 +25,29 @@ export const DOMAIN_EVENTS = {
   },
 
   /**
-   * Add more bounded contexts here as your system grows
-   *
-   * Example:
-   * ORDERS: {
-   *   ORDER_CREATED: "orders.order.created.v1",
-   *   ORDER_CONFIRMED: "orders.order.confirmed.v1",
-   *   ORDER_CANCELLED: "orders.order.cancelled.v1",
-   * },
-   *
-   * APPOINTMENTS: {
-   *   APPOINTMENT_SCHEDULED: "appointments.appointment.scheduled.v1",
-   *   APPOINTMENT_CONFIRMED: "appointments.appointment.confirmed.v1",
-   *   APPOINTMENT_CANCELLED: "appointments.appointment.cancelled.v1",
-   * }
+   * Business Context
    */
+  BUSINESS: {
+    BUSINESS_CREATED: "business.created.v1",
+  },
 } as const;
 
 /**
  * Type helper to extract all event types
  */
-export type DomainEventType = typeof DOMAIN_EVENTS[keyof typeof DOMAIN_EVENTS][keyof typeof DOMAIN_EVENTS[keyof typeof DOMAIN_EVENTS]];
+export type DomainEventType =
+  {
+    [K in keyof typeof DOMAIN_EVENTS]: typeof DOMAIN_EVENTS[K][keyof typeof DOMAIN_EVENTS[K]]
+  }[keyof typeof DOMAIN_EVENTS];
+
+
 
 /**
  * Event sources (bounded contexts)
  */
 export const EVENT_SOURCES = {
   IAM: "iam-service",
-  // Add more as needed
+  BUSINESS: "business-service"
 } as const;
 
 export type EventSource = typeof EVENT_SOURCES[keyof typeof EVENT_SOURCES];

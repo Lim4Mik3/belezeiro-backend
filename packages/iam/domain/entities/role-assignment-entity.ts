@@ -15,7 +15,7 @@ export class RoleAssignmentEntity extends BaseEntity<Props> {
     return "rasgn";
   }
 
-  private constructor(props: CreationProps) {
+  constructor(props: CreationProps) {
     super(props);
   }
 

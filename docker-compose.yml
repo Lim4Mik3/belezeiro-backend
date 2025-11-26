@@ -25,11 +25,29 @@ services:
     networks:
       - backend
 
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+    networks:
+      - backend
+
 volumes:
   dynamodb-data:
     name: dynamodb_data
   redis-data:
     name: redis_data
+  mongodb-data:
+    name: mongodb_data
+  mongodb-config:
+    name: mongodb_config
 
 networks:
   backend:

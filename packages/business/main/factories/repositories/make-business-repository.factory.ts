@@ -1,11 +1,11 @@
-import { IBusinessRepository } from "@business/app/contracts/repositories/i-business-repository";
-import { InMemoryBusinessRepository } from "@business/infra/repositories/in-memory-business-repository";
+import { IBusinessRepository } from '@core/app/contracts/repositories/i-business-repository';
+import { makeBusinessRepository as makeBusinessRepositoryCore } from '@core/main/factories/repositories';
 
 let instance: IBusinessRepository | null = null;
 
 export function makeBusinessRepository(): IBusinessRepository {
   if (!instance) {
-    instance = new InMemoryBusinessRepository();
+    instance = makeBusinessRepositoryCore();
   }
   return instance;
 }

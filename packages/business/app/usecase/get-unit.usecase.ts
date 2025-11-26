@@ -1,4 +1,4 @@
-import { IUnitRepository } from "../contracts/repositories/i-unit-repository";
+import { IUnitRepository } from '@core/app/contracts/repositories/i-unit-repository';
 
 class UseCase {
   constructor(

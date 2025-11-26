@@ -1,5 +1,5 @@
 import { IEventBus } from "@core/bus/i-event-bus";
-import { IBusinessRepository } from "../contracts/repositories/i-business-repository";
+import { IBusinessRepository } from '@core/app/contracts/repositories/i-business-repository';
 
 class UseCase {
   constructor(

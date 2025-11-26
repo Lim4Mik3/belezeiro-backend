@@ -9,14 +9,20 @@ import { makeUpdateUnitUseCase } from "@business/main/factories/usecases/make-up
 import { makeDeleteBusinessUseCase } from "@business/main/factories/usecases/make-delete-business.factory";
 import { makeDeleteUnitUseCase } from "@business/main/factories/usecases/make-delete-unit.factory";
 import { makeListUnitsByBusinessUseCase } from "@business/main/factories/usecases/make-list-units-by-business.factory";
+import { can } from "@core/app/services/authorization.service";
+import { PERMISSIONS } from "@iam/domain/permissions/permission-registry";
 
 export async function businessRoutes(app: FastifyInstance) {
   // Business routes
-  app.post("/businesses", { preHandler: authMiddleware }, async (request, reply) => {
+  app.post("/business", { preHandler: authMiddleware }, async (request, reply) => {
+    if (!can(request.permissions, PERMISSIONS.BUSINESS.CREATE)) {
+      throw new Error("You have no privilegies to execute this action.")
+    }
+
     try {
-      const { name, units } = request.body as {
+      const { name, unit } = request.body as {
         name: string;
-        units: Array<{ name: string }>;
+        unit: { name: string }
       };
 
       if (!name) {
@@ -24,7 +30,11 @@ export async function businessRoutes(app: FastifyInstance) {
       }
 
       const useCase = makeCreateBusinessUseCase();
-      const result = await useCase.execute({ name, units: units || [] });
+      const result = await useCase.execute({
+        userId: request.userId!,
+        name,
+        unit: { name: unit.name }
+      });
 
       return reply.status(201).send(result);
     } catch (error) {
@@ -33,12 +43,12 @@ export async function businessRoutes(app: FastifyInstance) {
     }
   });
 
-  app.get("/businesses/:id", { preHandler: authMiddleware }, async (request, reply) => {
+  app.get("/business/:id", { preHandler: authMiddleware }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
 
       const useCase = makeGetBusinessUseCase();
-      const result = await useCase.execute({ id });
+      const result = await useCase.execute({ businessId: id });
 
       if (!result) {
         return reply.status(404).send({ error: "Business not found" });
@@ -51,7 +61,7 @@ export async function businessRoutes(app: FastifyInstance) {
     }
   });
 
-  app.put("/businesses/:id", { preHandler: authMiddleware }, async (request, reply) => {
+  app.put("/business/:id", { preHandler: authMiddleware }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
       const { name } = request.body as { name: string };
@@ -61,7 +71,7 @@ export async function businessRoutes(app: FastifyInstance) {
       }
 
       const useCase = makeUpdateBusinessUseCase();
-      const result = await useCase.execute({ id, name });
+      const result = await useCase.execute({ businessId: id, name });
 
       return reply.send(result);
     } catch (error) {
@@ -70,12 +80,12 @@ export async function businessRoutes(app: FastifyInstance) {
     }
   });
 
-  app.delete("/businesses/:id", { preHandler: authMiddleware }, async (request, reply) => {
+  app.delete("/business/:id", { preHandler: authMiddleware }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
 
       const useCase = makeDeleteBusinessUseCase();
-      await useCase.execute({ id });
+      await useCase.execute({ businessId: id });
 
       return reply.status(204).send();
     } catch (error) {
@@ -85,7 +95,7 @@ export async function businessRoutes(app: FastifyInstance) {
   });
 
   // Unit routes
-  app.post("/businesses/:businessId/units", { preHandler: authMiddleware }, async (request, reply) => {
+  app.post("/business/:businessId/units", { preHandler: authMiddleware }, async (request, reply) => {
     try {
       const { businessId } = request.params as { businessId: string };
       const { name } = request.body as { name: string };
@@ -109,7 +119,7 @@ export async function businessRoutes(app: FastifyInstance) {
     }
   });
 
-  app.get("/businesses/:businessId/units", { preHandler: authMiddleware }, async (request, reply) => {
+  app.get("/business/:businessId/units", { preHandler: authMiddleware }, async (request, reply) => {
     try {
       const { businessId } = request.params as { businessId: string };
 
@@ -123,12 +133,12 @@ export async function businessRoutes(app: FastifyInstance) {
     }
   });
 
-  app.get("/units/:id", { preHandler: authMiddleware }, async (request, reply) => {
+  app.get("/unit/:id", { preHandler: authMiddleware }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
 
       const useCase = makeGetUnitUseCase();
-      const result = await useCase.execute({ id });
+      const result = await useCase.execute({ unitId: id });
 
       if (!result) {
         return reply.status(404).send({ error: "Unit not found" });
@@ -141,7 +151,7 @@ export async function businessRoutes(app: FastifyInstance) {
     }
   });
 
-  app.put("/units/:id", { preHandler: authMiddleware }, async (request, reply) => {
+  app.put("/unit/:id", { preHandler: authMiddleware }, async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
       const { name } = request.body as { name: string };
@@ -151,7 +161,7 @@ export async function businessRoutes(app: FastifyInstance) {
       }
 
       const useCase = makeUpdateUnitUseCase();
-      const result = await useCase.execute({ id, name });
+      const result = await useCase.execute({ unitId: id, name });
 
       return reply.send(result);
     } catch (error) {
@@ -160,17 +170,12 @@ export async function businessRoutes(app: FastifyInstance) {
     }
   });
 
-  app.delete("/units/:id", { preHandler: authMiddleware }, async (request, reply) => {
-    try {
-      const { id } = request.params as { id: string };
+  app.delete("/unit/:id", { preHandler: authMiddleware }, async (request, reply) => {
+    const { id } = request.params as { id: string };
 
-      const useCase = makeDeleteUnitUseCase();
-      await useCase.execute({ id });
+    const useCase = makeDeleteUnitUseCase();
+    await useCase.execute({ unitId: id });
 
-      return reply.status(204).send();
-    } catch (error) {
-      console.error("Error in DELETE /units/:id:", error);
-      return reply.status(500).send({ error: "Internal server error" });
-    }
+    return reply.status(204).send();
   });
 }

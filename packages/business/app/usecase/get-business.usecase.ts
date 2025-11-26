@@ -1,4 +1,4 @@
-import { IBusinessRepository } from "../contracts/repositories/i-business-repository";
+import { IBusinessRepository } from '@core/app/contracts/repositories/i-business-repository';
 
 class UseCase {
   constructor(
@@ -17,7 +17,7 @@ class UseCase {
     return {
       businessId: business.id,
       name: business.name,
-      units: business.units.map(unit => ({
+      units: business.units.map((unit: { id: string; name: string; businessId: string }) => ({
         unitId: unit.id,
         name: unit.name,
         businessId: unit.businessId

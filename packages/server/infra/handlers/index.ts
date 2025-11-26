@@ -1,5 +1,7 @@
 import { EventHandler } from "../queue/redis-queue-processor";
+import { BusinessCreatedHandler } from "./business-created.handler";
 import { UserAuthenticatedHandler } from "./user-authenticated.handler";
+import { UserRegisteredHandler } from "./user-registered.handler";
 
 /**
  * Registro centralizado de todos os handlers de eventos
@@ -10,8 +12,7 @@ import { UserAuthenticatedHandler } from "./user-authenticated.handler";
 export function getAllHandlers(): EventHandler[] {
   return [
     new UserAuthenticatedHandler(),
-    // Adicione mais handlers aqui conforme necessário
-    // new OrderCreatedHandler(),
-    // new AppointmentScheduledHandler(),
+    new UserRegisteredHandler(),
+    new BusinessCreatedHandler()
   ];
 }

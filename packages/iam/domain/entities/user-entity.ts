@@ -2,6 +2,7 @@ import { BaseEntity, BaseEntityProps } from "@core/domain/entities/base-entity";
 import { Email } from "../vo/email";
 import { PhotoURL } from "../vo/photo_url";
 import { UserAuthenticatedEvent } from "../events/user-authenticate";
+import { UserRegisteredEvent } from "../events/user-registered";
 
 type Props = {
   provider_id: string;
@@ -25,11 +26,17 @@ export class UserEntity extends BaseEntity<Props> {
   }
 
   constructor(props: CreationProps) {
+    const isNewUser = !props.createdAt && !props.id;
+
     super({
       ...props,
       email: Email.create(props.email),
       photo_url: PhotoURL.create(props.photo_url)
     });
+
+    if (isNewUser) {
+      this.addDomainEvent(new UserRegisteredEvent({ userId: this.id, occured_at: new Date() }));
+    }
   }
 
   authenticated(isNewUser: boolean, provider?: string) {

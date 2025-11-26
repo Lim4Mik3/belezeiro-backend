@@ -1,11 +1,9 @@
 import { CreateUnitUseCase } from "@business/app/usecase/create-unit.usecase";
-import { makeUnitRepository } from "../repositories/make-unit-repository.factory";
 import { makeBusinessRepository } from "../repositories/make-business-repository.factory";
 import { makeEventBus } from "@core/main/factories/make-event-bus.factory";
 
 export function makeCreateUnitUseCase(): CreateUnitUseCase {
   return new CreateUnitUseCase(
-    makeUnitRepository(),
     makeBusinessRepository(),
     makeEventBus()
   );

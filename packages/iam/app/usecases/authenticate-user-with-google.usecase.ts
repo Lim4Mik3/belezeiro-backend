@@ -1,6 +1,6 @@
 import { UserEntity } from "@iam/domain/entities/user-entity";
-import { IUserRepository } from "../contracts/repositories/i-user-repository";
-import { IJWTService } from "../contracts/services/i-jwt-service";
+import { IUserRepository } from '@core/app/contracts/repositories/i-user-repository';
+import { IJWTService } from "@core/app/contracts/services/i-jwt-service";
 import { IEventBus } from "@core/bus/i-event-bus";
 
 class UseCase {
@@ -29,14 +29,12 @@ class UseCase {
       created = true;
     }
 
-    console.log(user);
-
     const token = await this.JWTService.assign({ sub: user.id });
 
-    // Registrar e emitir evento de autenticação
     user.authenticated(created, "google");
 
     const events = user.getDomainEvents();
+
     for (const event of events) {
       await this.EventBus.publish(event);
     }
