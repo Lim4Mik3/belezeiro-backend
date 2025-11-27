@@ -7,7 +7,7 @@ frameworkVersion: '4'
 
 provider:
   name: aws
-  runtime: nodejs22.x
+  runtime: nodejs20.x
   architecture: arm64
   region: ${param:region, 'us-east-2'}
   stage: ${param:stage, 'dev'}

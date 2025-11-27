@@ -1,4 +1,6 @@
+import { BaseEntity } from '@core/domain/entities/base-entity';
 import { makeAuthenticateUser } from '@iam/factories/usecases/make-authenticate-user.factory';
+import { makeIDGeneratorService } from '@infra/factories/services/id-generator-service-factory';
 import { errorMiddleware, httpBodyJsonMiddleware } from '@infra/middlewares';
 import { response } from '@infra/utils/response-utils';
 import middy from '@middy/core';
@@ -6,6 +8,10 @@ import httpCors from '@middy/http-cors';
 
 import { APIGatewayProxyEventV2, APIGatewayProxyResult } from 'aws-lambda';
 import z from 'zod';
+
+BaseEntity.configure({
+  IDGenerator: makeIDGeneratorService(),
+})
 
 export const BodySchema = z.object({
   provider_id: z.string().min(1, 'Provider ID is required'),
@@ -26,7 +32,14 @@ const handle = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyRes
     provider_id: payload.provider_id
   });
 
-  return response({ token }, { statusCode: created ? 201 : 200 });
+  const maxAge = 7 * 24 * 60 * 60; // 7 dias em segundos
+
+  return response({ token }, {
+    statusCode: created ? 201 : 200,
+    cookies: [
+      `session=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${maxAge}`
+    ]
+  });
 };
 
 export const handler = middy(handle)

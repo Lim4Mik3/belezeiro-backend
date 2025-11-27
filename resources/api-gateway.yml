@@ -6,7 +6,7 @@ Resources:
   HttpApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: ${self:provider.stage}-belezeiro-api
+      Name: ${opt:stage, 'dev'}-belezeiro-api
       Description: Shared HTTP API Gateway for all Belezeiro modules
       ProtocolType: HTTP
       CorsConfiguration:
@@ -34,7 +34,7 @@ Resources:
       ApiId: !Ref HttpApi
       StageName: $default
       AutoDeploy: true
-      Description: Default stage for ${self:provider.stage} environment
+      Description: Default stage for ${opt:stage, 'dev'} environment
 
 # Export API Gateway ID and URL for other modules to use
 Outputs:
@@ -42,10 +42,10 @@ Outputs:
     Description: HTTP API Gateway ID
     Value: !Ref HttpApi
     Export:
-      Name: ${self:provider.stage}-BelezeiroHttpApiId
+      Name: ${opt:stage, 'dev'}-BelezeiroHttpApiId
 
   HttpApiUrl:
     Description: HTTP API Gateway URL
     Value: !GetAtt HttpApi.ApiEndpoint
     Export:
-      Name: ${self:provider.stage}-BelezeiroHttpApiUrl
+      Name: ${opt:stage, 'dev'}-BelezeiroHttpApiUrl

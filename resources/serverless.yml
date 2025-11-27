@@ -7,9 +7,9 @@ frameworkVersion: '4'
 
 provider:
   name: aws
-  runtime: nodejs22.x
-  region: ${param:region, 'us-east-2'}
-  stage: ${param:stage, 'dev'}
+  runtime: nodejs20.x
+  region: ${opt:region, 'us-east-2'}
+  stage: ${opt:stage, 'dev'}
 
 # Import resource definitions
 resources:

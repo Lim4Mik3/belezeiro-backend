@@ -3,7 +3,7 @@ frameworkVersion: '4'
 
 provider:
   name: aws
-  runtime: nodejs22.x
+  runtime: nodejs20.x
   architecture: arm64
   region: ${param:region, 'us-east-2'}
   stage: ${param:stage, 'dev'}
@@ -43,12 +43,21 @@ provider:
 functions:
   iam__authenticate-user:
     handler: lambdas/authenticate-user.handler
-    memorySize: 256
+    memorySize: 512
     timeout: 10
     events:
       - httpApi:
           path: /auth/authenticate-user
           method: POST
+        
+  iam__get-me:
+    handler: lambdas/get-me.handler
+    memorySize: 512
+    timeout: 10
+    events:
+      - httpApi:
+          path: /auth/get-me
+          method: GET
 
 build:
   esbuild:
@@ -56,12 +65,15 @@ build:
     minify: true
     sourcemap: false
     platform: node
-    target: node22
+    target: node20
     treeShaking: true
     keepNames: false
     format: esm
     external:
       - aws-sdk
+      - '@aws-sdk/client-dynamodb'
+      - '@aws-sdk/lib-dynamodb'
+      - '@aws-sdk/client-eventbridge'
 
 package:
   individually: true

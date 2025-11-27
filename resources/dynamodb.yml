@@ -6,7 +6,7 @@ Resources:
   BelezeiroMainTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: belezeiro-${sls:stage}-main
+      TableName: belezeiro-${opt:stage, 'dev'}-main
       BillingMode: PAY_PER_REQUEST # On-demand pricing
 
       # Primary Key
@@ -69,7 +69,7 @@ Resources:
       # Tags
       Tags:
         - Key: Environment
-          Value: ${sls:stage}
+          Value: ${opt:stage, 'dev'}
         - Key: Application
           Value: belezeiro
 
@@ -84,16 +84,16 @@ Outputs:
     Description: Name of the main DynamoDB table
     Value: !Ref BelezeiroMainTable
     Export:
-      Name: belezeiro-${sls:stage}-main-table-name
+      Name: belezeiro-${opt:stage, 'dev'}-main-table-name
 
   BelezeiroMainTableArn:
     Description: ARN of the main DynamoDB table
     Value: !GetAtt BelezeiroMainTable.Arn
     Export:
-      Name: belezeiro-${sls:stage}-main-table-arn
+      Name: belezeiro-${opt:stage, 'dev'}-main-table-arn
 
-  BelezeiroMainTableStreamArn:
-    Description: ARN of the DynamoDB table stream
-    Value: !GetAtt BelezeiroMainTable.StreamArn
-    Export:
-      Name: belezeiro-${sls:stage}-main-table-stream-arn
+  # BelezeiroMainTableStreamArn:
+  #   Description: ARN of the DynamoDB table stream
+  #   Value: !GetAtt BelezeiroMainTable.StreamArn
+  #   Export:
+  #     Name: belezeiro-${opt:stage, 'dev'}-main-table-stream-arn

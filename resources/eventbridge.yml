@@ -5,10 +5,10 @@ Resources:
   BelezeiroEventBus:
     Type: AWS::Events::EventBus
     Properties:
-      Name: belezeiro-${sls:stage}-event-bus
+      Name: belezeiro-${opt:stage, 'dev'}-event-bus
       Tags:
         - Key: Environment
-          Value: ${sls:stage}
+          Value: ${opt:stage, 'dev'}
         - Key: Application
           Value: belezeiro
 
@@ -16,7 +16,7 @@ Resources:
   BelezeiroEventArchive:
     Type: AWS::Events::Archive
     Properties:
-      ArchiveName: belezeiro-${sls:stage}-archive
+      ArchiveName: belezeiro-${opt:stage, 'dev'}-archive
       SourceArn: !GetAtt BelezeiroEventBus.Arn
       Description: Archive for all application events with 30-day retention
       RetentionDays: 30
@@ -28,12 +28,12 @@ Resources:
   BelezeiroEventDLQ:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: belezeiro-${sls:stage}-event-dlq
+      QueueName: belezeiro-${opt:stage, 'dev'}-event-dlq
       MessageRetentionPeriod: 1209600 # 14 days
       VisibilityTimeout: 300
       Tags:
         - Key: Environment
-          Value: ${sls:stage}
+          Value: ${opt:stage, 'dev'}
         - Key: Application
           Value: belezeiro
 
@@ -43,22 +43,22 @@ Outputs:
     Description: Name of the Belezeiro Event Bus
     Value: !Ref BelezeiroEventBus
     Export:
-      Name: belezeiro-${sls:stage}-event-bus-name
+      Name: belezeiro-${opt:stage, 'dev'}-event-bus-name
 
   BelezeiroEventBusArn:
     Description: ARN of the Belezeiro Event Bus
     Value: !GetAtt BelezeiroEventBus.Arn
     Export:
-      Name: belezeiro-${sls:stage}-event-bus-arn
+      Name: belezeiro-${opt:stage, 'dev'}-event-bus-arn
 
   BelezeiroEventDLQUrl:
     Description: URL of the Belezeiro Event DLQ
     Value: !Ref BelezeiroEventDLQ
     Export:
-      Name: belezeiro-${sls:stage}-event-dlq-url
+      Name: belezeiro-${opt:stage, 'dev'}-event-dlq-url
 
   BelezeiroEventDLQArn:
     Description: ARN of the Belezeiro Event DLQ
     Value: !GetAtt BelezeiroEventDLQ.Arn
     Export:
-      Name: belezeiro-${sls:stage}-event-dlq-arn
+      Name: belezeiro-${opt:stage, 'dev'}-event-dlq-arn
