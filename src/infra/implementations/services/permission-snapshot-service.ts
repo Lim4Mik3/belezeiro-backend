@@ -18,6 +18,8 @@ export class PermissionSnapshotService implements IPermissionSnapshotService {
   ) { }
 
   private async buildUserAuthorizationSnapshot(userId: string): Promise<IAuthzSnapshot> {
+    console.log(`[PermissionSnapshotService] buildUserAuthorizationSnapshot started for user ${userId}`);
+
     const globalPermissionsSet = new Set<string>();
     const businessPermissionsMap = new Map<string, Set<string>>();
     const unitPermissionsMap = new Map<string, Set<string>>();
@@ -25,9 +27,12 @@ export class PermissionSnapshotService implements IPermissionSnapshotService {
     let isAdmin = false;
 
     // 1. Get all active role assignments for the user
+    console.log(`[PermissionSnapshotService] Fetching active role assignments for user ${userId}`);
     const activeAssignments = await this.roleAssignmentRepository.findActiveByUserId(userId);
+    console.log(`[PermissionSnapshotService] Found ${activeAssignments.length} active assignments`);
 
     if (activeAssignments.length === 0) {
+      console.log(`[PermissionSnapshotService] No active assignments found, returning minimal snapshot`);
       // User has no active roles, return minimal snapshot
       return {
         id: userId,
@@ -47,9 +52,12 @@ export class PermissionSnapshotService implements IPermissionSnapshotService {
     // 2. BATCH FETCH: Get all role definitions in one go
     const roleIds = activeAssignments.map((a) => a.roleId);
     const uniqueRoleIds = [...new Set(roleIds)];
+    console.log(`[PermissionSnapshotService] Unique role IDs to fetch: ${uniqueRoleIds.join(', ')}`);
 
     // Fetch all role definitions at once
+    console.log(`[PermissionSnapshotService] Fetching role definitions...`);
     const roleDefinitions = await this.roleDefinitionRepository.findManyByIds(uniqueRoleIds);
+    console.log(`[PermissionSnapshotService] Found ${roleDefinitions.length} role definitions`);
 
     // Create a map for quick lookup
     const roleDefMap = new Map(roleDefinitions.map((rd) => [rd.id, rd]));
@@ -126,6 +134,7 @@ export class PermissionSnapshotService implements IPermissionSnapshotService {
     }
 
     // 5. Build final snapshot with sorted data
+    console.log(`[PermissionSnapshotService] Building final snapshot...`);
     const businessPermissions: Record<string, string[]> = {};
     for (const [key, perms] of businessPermissionsMap.entries()) {
       businessPermissions[key] = Array.from(perms).sort();
@@ -136,7 +145,7 @@ export class PermissionSnapshotService implements IPermissionSnapshotService {
       unitPermissions[key] = Array.from(perms).sort();
     }
 
-    return {
+    const snapshot = {
       id: userId,
       roles: uniqueRoleIds.sort(),
       permissions: {
@@ -149,6 +158,9 @@ export class PermissionSnapshotService implements IPermissionSnapshotService {
         business: Array.from(ownedBusinesses).sort(),
       },
     };
+
+    console.log(`[PermissionSnapshotService] Snapshot built successfully:`, JSON.stringify(snapshot, null, 2));
+    return snapshot;
   }
 
   async getUserSession(userId: string): Promise<IAuthzSnapshot | null> {

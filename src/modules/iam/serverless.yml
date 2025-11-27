@@ -1,6 +1,10 @@
 service: belezeiro-iam
 frameworkVersion: '4'
 
+custom:
+  eventBusName: !ImportValue belezeiro-${self:provider.stage}-event-bus-name
+  eventBusArn: !ImportValue belezeiro-${self:provider.stage}-event-bus-arn
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -8,21 +12,22 @@ provider:
   region: ${param:region, 'us-east-2'}
   stage: ${param:stage, 'dev'}
 
-  # Use shared HTTP API Gateway
   httpApi:
     id: !ImportValue ${self:provider.stage}-BelezeiroHttpApiId
 
-  # Environment variables
+  eventBridge:
+    useCloudFormation: true
+    eventBus: ${self:custom.eventBusName}   # <--- agora o provider usa seu bus
+
   environment:
     STAGE: ${self:provider.stage}
     JWT_SECRET: ${env:JWT_SECRET}
-    REDIS_URL: ${env:REDIS_URL}
+    UPSTASH_REDIS_REST_URL: ${env:UPSTASH_REDIS_REST_URL}
+    UPSTASH_REDIS_REST_TOKEN: ${env:UPSTASH_REDIS_REST_TOKEN}
 
-  # IAM Permissions
   iam:
     role:
       statements:
-        # DynamoDB permissions
         - Effect: Allow
           Action:
             - dynamodb:GetItem
@@ -33,15 +38,16 @@ provider:
             - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/belezeiro-${self:provider.stage}-main'
             - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/belezeiro-${self:provider.stage}-main/index/*'
 
-        # EventBridge permissions
+        # Permissions to publish events to your EventBus (imported)
         - Effect: Allow
           Action:
             - events:PutEvents
           Resource:
-            - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/belezeiro-${self:provider.stage}-event-bus'
+            - ${self:custom.eventBusArn}   # <--- AGORA SIM! IAM correto
+
 
 functions:
-  iam__authenticate-user:
+  authenticate-user:
     handler: lambdas/authenticate-user.handler
     memorySize: 512
     timeout: 10
@@ -50,7 +56,7 @@ functions:
           path: /auth/authenticate-user
           method: POST
         
-  iam__get-me:
+  get-me:
     handler: lambdas/get-me.handler
     memorySize: 512
     timeout: 10
@@ -58,6 +64,20 @@ functions:
       - httpApi:
           path: /auth/get-me
           method: GET
+
+  create-user-permission-snapshot:
+    handler: lambdas/create-user-permission-snapshot.handler
+    memorySize: 512
+    timeout: 10
+    events:
+      - eventBridge:
+          eventBus: ${self:custom.eventBusName}   # <--- ESSENCIAL!!
+          pattern:
+            source:
+              - "iam-service"
+            detail-type:
+              - "iam.user.authenticated.v1"
+
 
 build:
   esbuild:
@@ -68,7 +88,7 @@ build:
     target: node20
     treeShaking: true
     keepNames: false
-    format: esm
+    format: cjs
     external:
       - aws-sdk
       - '@aws-sdk/client-dynamodb'

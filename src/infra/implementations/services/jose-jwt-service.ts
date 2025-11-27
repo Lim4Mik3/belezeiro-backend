@@ -1,4 +1,5 @@
 import { IJWTService } from "@core/contracts/services/i-jwt-service";
+import { UnauthorizedError } from "@infra/errors/unauthorized-error";
 import { SignJWT, jwtVerify } from "jose";
 
 export class JoseJWTService implements IJWTService {
@@ -23,12 +24,12 @@ export class JoseJWTService implements IJWTService {
       const { payload } = await jwtVerify(token, this.secretKey);
 
       if (!payload.sub || typeof payload.sub !== "string") {
-        throw new Error("Invalid token: missing or invalid sub claim");
+        throw new UnauthorizedError("Invalid token: missing or invalid sub claim");
       }
 
       return { sub: payload.sub };
     } catch (error) {
-      throw new Error("Invalid token");
+      throw new UnauthorizedError();
     }
   }
 }

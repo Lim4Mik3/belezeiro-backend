@@ -1,3 +1,4 @@
+import { UnauthorizedError } from "@infra/errors/unauthorized-error";
 import { makeJWTService } from "@infra/factories/services/jwt-service-factory";
 import { MiddlewareObj } from "@middy/core";
 import { APIGatewayProxyEventV2, APIGatewayProxyResult } from "aws-lambda";
@@ -14,7 +15,7 @@ export const MiddyAuthMiddleware = (): MiddlewareObj<AuthenticatedEvent, APIGate
       const sessionCookie = cookies.find((cookie) => cookie.startsWith('session='));
 
       if (!sessionCookie) {
-        throw new Error('Session cookie not found');
+        throw new UnauthorizedError();
       }
 
       const sessionToken = sessionCookie.split('=')[1];

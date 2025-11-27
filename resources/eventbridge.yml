@@ -1,22 +1,20 @@
 # EventBridge Resources - Shared across all modules
 # Handles event-driven communication between IAM, Business, and other modules
-
 Resources:
   BelezeiroEventBus:
     Type: AWS::Events::EventBus
     Properties:
-      Name: belezeiro-${opt:stage, 'dev'}-event-bus
+      Name: belezeiro-${self:provider.stage, 'dev'}-event-bus
       Tags:
         - Key: Environment
-          Value: ${opt:stage, 'dev'}
+          Value: ${self:provider.stage, 'dev'}
         - Key: Application
           Value: belezeiro
 
-  # Event Archive for replay capability
   BelezeiroEventArchive:
     Type: AWS::Events::Archive
     Properties:
-      ArchiveName: belezeiro-${opt:stage, 'dev'}-archive
+      ArchiveName: belezeiro-${self:provider.stage, 'dev'}-archive
       SourceArn: !GetAtt BelezeiroEventBus.Arn
       Description: Archive for all application events with 30-day retention
       RetentionDays: 30
@@ -24,41 +22,39 @@ Resources:
         source:
           - prefix: "belezeiro."
 
-  # Dead Letter Queue for failed events
   BelezeiroEventDLQ:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: belezeiro-${opt:stage, 'dev'}-event-dlq
+      QueueName: belezeiro-${self:provider.stage, 'dev'}-event-dlq
       MessageRetentionPeriod: 1209600 # 14 days
       VisibilityTimeout: 300
       Tags:
         - Key: Environment
-          Value: ${opt:stage, 'dev'}
+          Value: ${self:provider.stage, 'dev'}
         - Key: Application
           Value: belezeiro
 
-# CloudFormation Outputs - Exportados para uso em outros módulos
 Outputs:
   BelezeiroEventBusName:
     Description: Name of the Belezeiro Event Bus
     Value: !Ref BelezeiroEventBus
     Export:
-      Name: belezeiro-${opt:stage, 'dev'}-event-bus-name
+      Name: belezeiro-${self:provider.stage, 'dev'}-event-bus-name
 
   BelezeiroEventBusArn:
     Description: ARN of the Belezeiro Event Bus
     Value: !GetAtt BelezeiroEventBus.Arn
     Export:
-      Name: belezeiro-${opt:stage, 'dev'}-event-bus-arn
+      Name: belezeiro-${self:provider.stage, 'dev'}-event-bus-arn
 
   BelezeiroEventDLQUrl:
     Description: URL of the Belezeiro Event DLQ
     Value: !Ref BelezeiroEventDLQ
     Export:
-      Name: belezeiro-${opt:stage, 'dev'}-event-dlq-url
+      Name: belezeiro-${self:provider.stage, 'dev'}-event-dlq-url
 
   BelezeiroEventDLQArn:
     Description: ARN of the Belezeiro Event DLQ
     Value: !GetAtt BelezeiroEventDLQ.Arn
     Export:
-      Name: belezeiro-${opt:stage, 'dev'}-event-dlq-arn
+      Name: belezeiro-${self:provider.stage, 'dev'}-event-dlq-arn

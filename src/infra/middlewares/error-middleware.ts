@@ -1,6 +1,7 @@
 import type { MiddlewareObj } from '@middy/core';
 import type { APIGatewayProxyResult } from 'aws-lambda';
 import { DomainError } from '@business/domain/errors';
+import { UnauthorizedError } from '@infra/errors/unauthorized-error';
 
 interface ErrorResponse {
   error: string;
@@ -12,14 +13,6 @@ export const errorMiddleware = (): MiddlewareObj<any, APIGatewayProxyResult> => 
   return {
     onError: async (request) => {
       const error = request.error;
-
-      // Log do erro para observabilidade
-      console.error('Lambda error:', {
-        name: error?.name,
-        message: error?.message,
-        stack: error?.stack,
-        event: request.event,
-      });
 
       let response: ErrorResponse;
 
@@ -39,10 +32,10 @@ export const errorMiddleware = (): MiddlewareObj<any, APIGatewayProxyResult> => 
         };
       }
       // Erros de autoriza��o
-      else if (error?.name === 'UnauthorizedError' || error?.message?.includes('Unauthorized')) {
+      else if (error instanceof UnauthorizedError) {
         response = {
-          error: 'Unauthorized',
-          statusCode: 401,
+          error: error.message,
+          statusCode: error.status,
         };
       }
       // Erros de permiss�o
