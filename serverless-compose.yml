@@ -12,16 +12,28 @@ params:
     cacheMaxSize: ${env:CACHE_MAX_SIZE}
 
 services:
-  iam:
-    path: packages/iam
+  # Shared infrastructure resources (EventBridge, DynamoDB, etc.)
+  resources:
+    path: resources
     params:
       stage: 'dev'
-      region: ${opt:region, 'us-east-1'}
+      region: ${opt:region, 'us-east-2'}
 
-  business:
-    path: packages/business
+  # IAM module
+  iam:
+    path: src/modules/iam
     params:
       stage: 'dev'
-      region: ${opt:region, 'us-east-1'}
+      region: ${opt:region, 'us-east-2'}
     dependsOn:
+      - resources
+
+  # Business module
+  business:
+    path: src/modules/business
+    params:
+      stage: 'dev'
+      region: ${opt:region, 'us-east-2'}
+    dependsOn:
+      - resources
       - iam

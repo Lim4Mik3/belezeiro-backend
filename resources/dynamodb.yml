@@ -1,0 +1,99 @@
+# DynamoDB Resources - Shared across all modules
+# Single table design for the entire application
+
+Resources:
+  # Main DynamoDB Table
+  BelezeiroMainTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: belezeiro-${sls:stage}-main
+      BillingMode: PAY_PER_REQUEST # On-demand pricing
+
+      # Primary Key
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        # GSI attributes
+        - AttributeName: GSI1_PK
+          AttributeType: S
+        - AttributeName: GSI1_SK
+          AttributeType: S
+        - AttributeName: GSI2_PK
+          AttributeType: S
+        - AttributeName: GSI2_SK
+          AttributeType: S
+
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+
+      # Global Secondary Indexes
+      GlobalSecondaryIndexes:
+        # GSI1 - Generic inverted index
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1_PK
+              KeyType: HASH
+            - AttributeName: GSI1_SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+        # GSI2 - Additional query patterns
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2_PK
+              KeyType: HASH
+            - AttributeName: GSI2_SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+      # Point-in-time recovery
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+      # Server-side encryption
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+
+      # Stream for CDC (Change Data Capture)
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
+
+      # Tags
+      Tags:
+        - Key: Environment
+          Value: ${sls:stage}
+        - Key: Application
+          Value: belezeiro
+
+      # Time to Live
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+# CloudFormation Outputs
+Outputs:
+  BelezeiroMainTableName:
+    Description: Name of the main DynamoDB table
+    Value: !Ref BelezeiroMainTable
+    Export:
+      Name: belezeiro-${sls:stage}-main-table-name
+
+  BelezeiroMainTableArn:
+    Description: ARN of the main DynamoDB table
+    Value: !GetAtt BelezeiroMainTable.Arn
+    Export:
+      Name: belezeiro-${sls:stage}-main-table-arn
+
+  BelezeiroMainTableStreamArn:
+    Description: ARN of the DynamoDB table stream
+    Value: !GetAtt BelezeiroMainTable.StreamArn
+    Export:
+      Name: belezeiro-${sls:stage}-main-table-stream-arn

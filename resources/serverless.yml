@@ -1,0 +1,22 @@
+# Shared Resources Service
+# Contains infrastructure shared across all modules (EventBridge, DynamoDB, etc.)
+
+service: belezeiro-resources
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: ${param:region, 'us-east-2'}
+  stage: ${param:stage, 'dev'}
+
+# Import resource definitions
+resources:
+  # EventBridge resources
+  - ${file(eventbridge.yml)}
+
+  # DynamoDB resources
+  - ${file(dynamodb.yml)}
+
+# No functions needed - this service only provisions infrastructure

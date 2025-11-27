@@ -1,0 +1,64 @@
+# EventBridge Resources - Shared across all modules
+# Handles event-driven communication between IAM, Business, and other modules
+
+Resources:
+  BelezeiroEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: belezeiro-${sls:stage}-event-bus
+      Tags:
+        - Key: Environment
+          Value: ${sls:stage}
+        - Key: Application
+          Value: belezeiro
+
+  # Event Archive for replay capability
+  BelezeiroEventArchive:
+    Type: AWS::Events::Archive
+    Properties:
+      ArchiveName: belezeiro-${sls:stage}-archive
+      SourceArn: !GetAtt BelezeiroEventBus.Arn
+      Description: Archive for all application events with 30-day retention
+      RetentionDays: 30
+      EventPattern:
+        source:
+          - prefix: "belezeiro."
+
+  # Dead Letter Queue for failed events
+  BelezeiroEventDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: belezeiro-${sls:stage}-event-dlq
+      MessageRetentionPeriod: 1209600 # 14 days
+      VisibilityTimeout: 300
+      Tags:
+        - Key: Environment
+          Value: ${sls:stage}
+        - Key: Application
+          Value: belezeiro
+
+# CloudFormation Outputs - Exportados para uso em outros módulos
+Outputs:
+  BelezeiroEventBusName:
+    Description: Name of the Belezeiro Event Bus
+    Value: !Ref BelezeiroEventBus
+    Export:
+      Name: belezeiro-${sls:stage}-event-bus-name
+
+  BelezeiroEventBusArn:
+    Description: ARN of the Belezeiro Event Bus
+    Value: !GetAtt BelezeiroEventBus.Arn
+    Export:
+      Name: belezeiro-${sls:stage}-event-bus-arn
+
+  BelezeiroEventDLQUrl:
+    Description: URL of the Belezeiro Event DLQ
+    Value: !Ref BelezeiroEventDLQ
+    Export:
+      Name: belezeiro-${sls:stage}-event-dlq-url
+
+  BelezeiroEventDLQArn:
+    Description: ARN of the Belezeiro Event DLQ
+    Value: !GetAtt BelezeiroEventDLQ.Arn
+    Export:
+      Name: belezeiro-${sls:stage}-event-dlq-arn
