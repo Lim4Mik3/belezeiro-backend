@@ -1,4 +1,4 @@
-import { IRoleDefinitionRepository } from 'packages/_core_/app/contracts/repositories/i-role-definition-repository'
+import { IRoleDefinitionRepository } from '@core/contracts/repositories/i-role-definition-repository'
 
 class UseCase {
 	constructor(private RoleDefinitionRepository: IRoleDefinitionRepository) { }

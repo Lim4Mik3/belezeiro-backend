@@ -1,8 +1,8 @@
-import { IRoleAssignmentRepository } from 'packages/_core_/app/contracts/repositories/i-role-assignment-repository';
-import { IRoleDefinitionRepository } from 'packages/_core_/app/contracts/repositories/i-role-definition-repository';
+import { IRoleAssignmentRepository } from '@core/contracts/repositories/i-role-assignment-repository';
+import { IRoleDefinitionRepository } from '@core/contracts/repositories/i-role-definition-repository';
 import { ROLES_REGISTRY } from "@iam/domain/roles/roles-registry";
 import { RoleAssignmentEntity } from "@iam/domain/entities/role-assignment-entity";
-import { IEventBus } from "@core/app/contracts/event-bus/i-event-bus";
+import { IEventBus } from "@core/contracts/event-bus/i-event-bus";
 
 class UseCase {
   constructor(

@@ -1,5 +1,5 @@
-import type { IRoleDefinitionRepository } from 'packages/_core_/app/contracts/repositories/i-role-definition-repository'
-import type { IDGeneratorService } from 'packages/_core_/domain/services/id-generator'
+import type { IRoleDefinitionRepository } from '@core/contracts/repositories/i-role-definition-repository'
+import type { IIDGeneratorService } from '@core/contracts/services/i-id-generator'
 import {
 	RoleDefinitionEntity,
 	ROLE_SCOPE_GLOBAL,
@@ -26,7 +26,7 @@ const GLOBAL_ROLES = {
 
 export const seedGlobalRoles = async (
 	roleDefinitionRepository: IRoleDefinitionRepository,
-	idGenerator: IDGeneratorService,
+	idGenerator: IIDGeneratorService,
 ) => {
 	console.log('\n🌱 Iniciando seed de roles globais...\n')
 

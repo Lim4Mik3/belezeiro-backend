@@ -1,5 +1,5 @@
-import { IRoleDefinitionRepository } from 'packages/_core_/app/contracts/repositories/i-role-definition-repository';
-import { makeRoleDefinitionRepository as makeRoleDefinitionRepositoryCore } from 'packages/_core_/main/factories/repositories';
+import { IRoleDefinitionRepository } from '@core/contracts/repositories/i-role-definition-repository';
+import { makeRoleDefinitionRepository as makeRoleDefinitionRepositoryCore } from '@infra/factories/repositories/role-definition-repository-factory';
 
 let instance: IRoleDefinitionRepository | null = null;
 

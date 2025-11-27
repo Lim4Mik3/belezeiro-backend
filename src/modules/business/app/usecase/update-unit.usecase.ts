@@ -1,6 +1,6 @@
-import { IEventBus } from "@core/app/contracts/event-bus/i-event-bus";
-import { IBusinessRepository } from 'packages/_core_/app/contracts/repositories/i-business-repository';
-import { IUnitRepository } from 'packages/_core_/app/contracts/repositories/i-unit-repository';
+import { IEventBus } from "@core/contracts/event-bus/i-event-bus";
+import { IBusinessRepository } from '@core/contracts/repositories/i-business-repository';
+import { IUnitRepository } from '@core/contracts/repositories/i-unit-repository';
 import { BusinessNotFoundError, UnitNotFoundError } from "@business/domain/errors";
 
 class UseCase {

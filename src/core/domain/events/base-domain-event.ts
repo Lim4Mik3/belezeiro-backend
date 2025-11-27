@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { IDomainEvent } from "packages/_core_/bus/i-event-bus";
+import { IDomainEvent } from "@core/contracts/event-bus/i-event-bus";
 import { DomainEventType, EventSource } from "./event-registry";
 
 /**

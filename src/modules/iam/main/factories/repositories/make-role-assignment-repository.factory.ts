@@ -1,5 +1,5 @@
-import { IRoleAssignmentRepository } from 'packages/_core_/app/contracts/repositories/i-role-assignment-repository';
-import { makeRoleAssignmentRepository as makeRoleAssignmentRepositoryCore } from 'packages/_core_/main/factories/repositories';
+import { IRoleAssignmentRepository } from '@core/contracts/repositories/i-role-assignment-repository';
+import { makeRoleAssignmentRepository as makeRoleAssignmentRepositoryCore } from '@infra/factories/repositories/role-assignment-repository-factory';
 
 let instance: IRoleAssignmentRepository | null = null;
 

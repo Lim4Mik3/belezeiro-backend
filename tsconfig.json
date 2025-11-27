@@ -1,13 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "lib": [
-      "ESNext"
-    ],
-    "types": [
-      "bun-types"
+      "ES2022"
     ],
     "strict": true,
     "esModuleInterop": true,
@@ -20,22 +17,25 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": [
-        "modules/_core_/*"
+        "src/core/*"
+      ],
+      "@infra/*": [
+        "src/infra/*"
       ],
       "@iam/*": [
-        "modules/iam/*"
+        "src/modules/iam/*"
       ],
       "@business/*": [
-        "modules/business/*"
+        "src/modules/business/*"
       ],
-      "@shared/*": [
-        "modules/shared/*"
+      "@billing/*": [
+        "src/modules/billing/*"
       ]
     }
   },
   "include": [
     "__test__/**/*",
-    "modules/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

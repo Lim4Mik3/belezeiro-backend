@@ -1,11 +1,11 @@
-import type { ICacheRepository } from "packages/_core_/app/contracts/i-cache-repository";
-import type { IAuthzSnapshot } from "packages/_core_/app/contracts/i-authz-snapshot";
-import type { IRoleAssignmentRepository } from "packages/_core_/app/contracts/repositories/i-role-assignment-repository";
-import type { IRoleDefinitionRepository } from "packages/_core_/app/contracts/repositories/i-role-definition-repository";
-import type { IUserRepository } from "packages/_core_/app/contracts/repositories/i-user-repository";
-import { STANDARD_ROLES } from "packages/_core_/domain/constants/role-names";
+import type { ICacheRepository } from "@core/contracts/cache/i-cache-repository";
+import type { IAuthzSnapshot } from "@core/dtos/i-authz-snapshot";
+import type { IRoleAssignmentRepository } from "@core/contracts/repositories/i-role-assignment-repository";
+import type { IRoleDefinitionRepository } from "@core/contracts/repositories/i-role-definition-repository";
+import type { IUserRepository } from "@core/contracts/repositories/i-user-repository";
+import { STANDARD_ROLES } from "@core/domain/constants/role-names";
 import type { IPermissionSnapshotService } from "@core/contracts/services/i-permissions-snapshot-service";
-import { CreateUserPermissionSnapshotCacheKey } from "packages/_core_/infra/utils/create-user-permission-snapshot-cache-key.utils";
+import { CreateUserPermissionSnapshotCacheKey } from "@infra/utils/create-user-permission-snapshot-cache-key.utils";
 
 export class PermissionSnapshotService implements IPermissionSnapshotService {
   private readonly TTL = 60 * 30; // 30 minutos

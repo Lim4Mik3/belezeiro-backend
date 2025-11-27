@@ -1,7 +1,7 @@
 import { UserEntity } from "@iam/domain/entities/user-entity";
-import { IUserRepository } from 'packages/_core_/app/contracts/repositories/i-user-repository';
+import { IUserRepository } from '@core/contracts/repositories/i-user-repository';
 import { IJWTService } from "@core/contracts/services/i-jwt-service";
-import { IEventBus } from "@core/app/contracts/event-bus/i-event-bus";
+import { IEventBus } from "@core/contracts/event-bus/i-event-bus";
 
 class UseCase {
   constructor(
@@ -14,7 +14,7 @@ class UseCase {
     const { name, email, photo_url, provider_id } = input;
 
     let created = false;
-    let user = await this.UserRepository.findUserByProviderID(provider_id);
+    let user = await this.UserRepository.findByProviderId(provider_id);
 
     if (!user) {
       user = new UserEntity({

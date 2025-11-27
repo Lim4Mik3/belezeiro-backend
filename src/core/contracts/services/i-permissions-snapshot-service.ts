@@ -1,4 +1,4 @@
-import { IAuthzSnapshot } from "packages/_core_/app/contracts/i-authz-snapshot";
+import { IAuthzSnapshot } from "@core/dtos/i-authz-snapshot";
 
 export interface IPermissionSnapshotService {
   getUserSession(userId: string): Promise<IAuthzSnapshot | null>;

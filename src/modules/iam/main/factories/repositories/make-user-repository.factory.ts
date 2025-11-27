@@ -1,5 +1,5 @@
-import { IUserRepository } from 'packages/_core_/app/contracts/repositories/i-user-repository';
-import { makeUserRepository as makeUserRepositoryCore } from 'packages/_core_/main/factories/repositories';
+import { IUserRepository } from '@core/contracts/repositories/i-user-repository';
+import { makeUserRepository as makeUserRepositoryCore } from '@infra/factories/repositories/user-repository-factory';
 
 let instance: IUserRepository | null = null;
 

@@ -1,4 +1,4 @@
-import { makePermissionSnapshotService } from "packages/_core_/main/factories/services/make-permission-snapshot.factory";
+import { makePermissionSnapshotService } from "@infra/factories/services/permission-snapshot-service-factory";
 
 /**
  * IAM-specific factory for PermissionSnapshotService

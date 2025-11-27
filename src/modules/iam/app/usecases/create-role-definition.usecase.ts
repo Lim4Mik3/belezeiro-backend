@@ -1,5 +1,5 @@
-import { IEventBus } from '@core/app/contracts/event-bus/i-event-bus'
-import { IRoleDefinitionRepository } from 'packages/_core_/app/contracts/repositories/i-role-definition-repository'
+import { IEventBus } from '@core/contracts/event-bus/i-event-bus'
+import { IRoleDefinitionRepository } from '@core/contracts/repositories/i-role-definition-repository'
 import {
 	RoleDefinitionEntity,
 	RoleDefinitionScope,

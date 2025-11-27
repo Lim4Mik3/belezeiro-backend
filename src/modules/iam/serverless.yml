@@ -42,7 +42,6 @@ package:
     - '!**/*.spec.ts'
     - '!coverage/**'
     - '!tsconfig.json'
-    - '!bun.lockb'
     - '!*.md'
     - '!*.config.*'
 

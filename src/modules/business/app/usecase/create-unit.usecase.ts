@@ -1,5 +1,5 @@
-import { IEventBus } from "@core/app/contracts/event-bus/i-event-bus";
-import { IBusinessRepository } from 'packages/_core_/app/contracts/repositories/i-business-repository';
+import { IEventBus } from "@core/contracts/event-bus/i-event-bus";
+import { IBusinessRepository } from '@core/contracts/repositories/i-business-repository';
 import { UnitEntity } from "@business/domain/entities/unit-entity";
 import { BusinessNotFoundError } from "@business/domain/errors";
 

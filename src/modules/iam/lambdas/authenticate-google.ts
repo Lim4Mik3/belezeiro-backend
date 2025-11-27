@@ -1,8 +1,8 @@
 import middy from '@middy/core';
 import httpCors from '@middy/http-cors';
 import type { APIGatewayProxyEventV2, APIGatewayProxyResult } from 'aws-lambda';
-import { errorMiddleware, httpBodyJsonMiddleware } from 'packages/_core_/middy/middlewares';
-import { response } from 'packages/_core_/middy/utils';
+import { errorMiddleware, httpBodyJsonMiddleware } from '@infra/middlewares';
+import { response } from '@infra/utils/response-utils';
 import { makeAuthenticateUserWithGoogleUseCase } from '@iam/main/factories/usecases/make-authenticate-user-with-google.factory';
 
 const handle = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResult> => {

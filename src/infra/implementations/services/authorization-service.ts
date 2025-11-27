@@ -1,3 +1,6 @@
+import { IAuthzSnapshot } from "@core/dtos/i-authz-snapshot"
+import { Permission } from "@iam/domain/permissions/permission-registry"
+
 export type AuthorizationScope = 'global' | 'business' | 'unit' | 'own'
 
 export interface AuthorizationOptions {

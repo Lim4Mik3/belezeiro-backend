@@ -1,5 +1,5 @@
-import { BaseDomainEvent } from "packages/_core_/domain/events/base-domain-event";
-import { DOMAIN_EVENTS, EVENT_SOURCES } from "packages/_core_/domain/events/event-registry";
+import { BaseDomainEvent } from "@core/domain/events/base-domain-event";
+import { DOMAIN_EVENTS, EVENT_SOURCES } from "@core/domain/events/event-registry";
 
 export type BusinessCreatedEventPayload = {
   businessId: string;

@@ -1,8 +1,8 @@
-import { BaseEntity, BaseEntityProps } from "packages/_core_/domain/entities/base-entity";
 import { Email } from "../vo/email";
 import { PhotoURL } from "../vo/photo_url";
 import { UserAuthenticatedEvent } from "../events/user-authenticate";
 import { UserRegisteredEvent } from "../events/user-registered";
+import { BaseEntity, BaseEntityProps } from "@core/domain/entities/base-entity";
 
 type Props = {
   provider_id: string;

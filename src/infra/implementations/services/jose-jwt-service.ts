@@ -1,11 +1,10 @@
 import { IJWTService } from "@core/contracts/services/i-jwt-service";
 import { SignJWT, jwtVerify } from "jose";
 
-export class JWTService implements IJWTService {
+export class JoseJWTService implements IJWTService {
   private secretKey: Uint8Array;
 
   constructor(secret: string) {
-    // Convert secret string to Uint8Array for jose
     this.secretKey = new TextEncoder().encode(secret);
   }
 

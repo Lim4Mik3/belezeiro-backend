@@ -1,4 +1,4 @@
-import { BaseEntity, BaseEntityProps } from "packages/_core_/domain/entities/base-entity";
+import { BaseEntity, BaseEntityProps } from "@core/domain/entities/base-entity";
 
 type Props = {
   name: string;

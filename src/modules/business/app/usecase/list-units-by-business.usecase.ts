@@ -1,5 +1,5 @@
-import { IUnitRepository } from 'packages/_core_/app/contracts/repositories/i-unit-repository';
-import { IBusinessRepository } from 'packages/_core_/app/contracts/repositories/i-business-repository';
+import { IUnitRepository } from '@core/contracts/repositories/i-unit-repository';
+import { IBusinessRepository } from '@core/contracts/repositories/i-business-repository';
 
 class UseCase {
   constructor(

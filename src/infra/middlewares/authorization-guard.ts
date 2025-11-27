@@ -1,4 +1,8 @@
 import { CreateUserPermissionSnapshotCacheKey } from "../utils/create-user-permission-snapshot-cache-key.utils";
+import { makeJWTService } from "@infra/factories/services/jwt-service-factory";
+import { makeCacheRepository } from "@infra/factories/cache/cache-repository-factory";
+import { makePermissionSnapshotService } from "@infra/factories/services/permission-snapshot-service-factory";
+import { IAuthzSnapshot } from "@core/dtos/i-authz-snapshot";
 
 const Guard = async (input: Guard.Input): Guard.Output => {
   const { token } = input;

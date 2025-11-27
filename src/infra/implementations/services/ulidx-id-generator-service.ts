@@ -1,10 +1,10 @@
-import { IDGeneratorService } from "packages/_core_/domain/services/id-generator";
-
 import { ulid } from "ulidx"
+
+import { IIDGeneratorService } from "@core/contracts/services/i-id-generator";
 
 const IDPrefixRegex = /[^a-zA-Z]/g
 
-export class ULIDIDGeneratorService implements IDGeneratorService {
+export class ULIDXIDGeneratorService implements IIDGeneratorService {
   generate(prefix: string): string {
     if (!prefix || prefix.trim().length === 0) {
       throw new Error('Prefix cannot be empty')
@@ -19,4 +19,3 @@ export class ULIDIDGeneratorService implements IDGeneratorService {
     return cleanPrefix + '_' + ulid()
   }
 }
-

@@ -7,14 +7,11 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: provided.al2
+  runtime: nodejs20.x
   architecture: arm64
   region: ${param:region}
   stage: ${param:stage}
 
-  # Bun Layer (Update with your published layer ARN)
-  layers:
-    - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:bun:1
 
   # Global environment variables for all functions
   environment:
