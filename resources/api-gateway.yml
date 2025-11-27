@@ -1,0 +1,51 @@
+# Shared HTTP API Gateway
+# All modules will use this single API Gateway
+
+Resources:
+  # HTTP API Gateway (v2)
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: ${self:provider.stage}-belezeiro-api
+      Description: Shared HTTP API Gateway for all Belezeiro modules
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
+          - X-Amz-Date
+          - X-Api-Key
+          - X-Amz-Security-Token
+        MaxAge: 300
+
+  # Default Stage
+  HttpApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: $default
+      AutoDeploy: true
+      Description: Default stage for ${self:provider.stage} environment
+
+# Export API Gateway ID and URL for other modules to use
+Outputs:
+  HttpApiId:
+    Description: HTTP API Gateway ID
+    Value: !Ref HttpApi
+    Export:
+      Name: ${self:provider.stage}-BelezeiroHttpApiId
+
+  HttpApiUrl:
+    Description: HTTP API Gateway URL
+    Value: !GetAtt HttpApi.ApiEndpoint
+    Export:
+      Name: ${self:provider.stage}-BelezeiroHttpApiUrl

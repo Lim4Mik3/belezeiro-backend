@@ -1,18 +1,9 @@
 params:
   default:
-    # Core Module - Shared environment variables (loaded from .env via serverless-dotenv-plugin)
-    nodeEnv: ${env:NODE_ENV}
-    upstashRedisUrl: ${env:UPSTASH_REDIS_REST_URL}
-    upstashRedisToken: ${env:UPSTASH_REDIS_REST_TOKEN}
-    eventBusType: ${env:EVENT_BUS_TYPE}
-    eventBusRetryAttempts: ${env:EVENT_BUS_RETRY_ATTEMPTS}
-    eventBusRetryDelay: ${env:EVENT_BUS_RETRY_DELAY}
-    idGeneratorType: ${env:ID_GENERATOR_TYPE}
-    cacheTtl: ${env:CACHE_TTL}
-    cacheMaxSize: ${env:CACHE_MAX_SIZE}
+    env: 'dev'
 
 services:
-  # Shared infrastructure resources (EventBridge, DynamoDB, etc.)
+  # Shared infrastructure resources (API Gateway, EventBridge, DynamoDB, etc.)
   resources:
     path: resources
     params:
@@ -29,11 +20,10 @@ services:
       - resources
 
   # Business module
-  business:
-    path: src/modules/business
-    params:
-      stage: 'dev'
-      region: ${opt:region, 'us-east-2'}
-    dependsOn:
-      - resources
-      - iam
+  # business:
+  #   path: src/modules/business
+  #   params:
+  #     stage: 'dev'
+  #     region: ${opt:region, 'us-east-2'}
+  #   dependsOn:
+  #     - resources

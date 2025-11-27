@@ -55,4 +55,4 @@ namespace UseCase {
   export type Output = { token: string, created: boolean; }
 }
 
-export { UseCase as AuthenticateUserWithGoogleUseCase };
+export { UseCase as AuthenticateUserUseCase };

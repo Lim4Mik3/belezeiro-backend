@@ -3,35 +3,21 @@
 
 service: belezeiro-business
 
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: nodejs22.x
   architecture: arm64
-  region: ${param:region}
-  stage: ${param:stage}
+  region: ${param:region, 'us-east-2'}
+  stage: ${param:stage, 'dev'}
 
+  # Use shared HTTP API Gateway
+  httpApi:
+    id: !ImportValue ${self:provider.stage}-BelezeiroHttpApiId
 
   # Global environment variables for all functions
   environment:
-    # Core Module Envs (inherited from serverless-compose.yml params)
-    NODE_ENV: ${param:nodeEnv}
-    UPSTASH_REDIS_REST_URL: ${param:upstashRedisUrl}
-    UPSTASH_REDIS_REST_TOKEN: ${param:upstashRedisToken}
-    EVENT_BUS_TYPE: ${param:eventBusType}
-    EVENT_BUS_RETRY_ATTEMPTS: ${param:eventBusRetryAttempts}
-    EVENT_BUS_RETRY_DELAY: ${param:eventBusRetryDelay}
-    ID_GENERATOR_TYPE: ${param:idGeneratorType}
-    CACHE_TTL: ${param:cacheTtl}
-    CACHE_MAX_SIZE: ${param:cacheMaxSize}
-
-    # Business Module Envs (specific to this module, loaded from .env)
-    DATABASE_URL: ${env:DATABASE_URL}
-    DATABASE_POOL_MIN: ${env:DATABASE_POOL_MIN}
-    DATABASE_POOL_MAX: ${env:DATABASE_POOL_MAX}
-    MAX_UNITS_PER_BUSINESS: ${env:MAX_UNITS_PER_BUSINESS}
-    BUSINESS_NAME_MAX_LENGTH: ${env:BUSINESS_NAME_MAX_LENGTH}
 
   # IAM Permissions
   iam:

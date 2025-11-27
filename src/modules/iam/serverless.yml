@@ -5,17 +5,49 @@ provider:
   name: aws
   runtime: nodejs22.x
   architecture: arm64
-  region: us-east-2
-  stage: dev
+  region: ${param:region, 'us-east-2'}
+  stage: ${param:stage, 'dev'}
+
+  # Use shared HTTP API Gateway
+  httpApi:
+    id: !ImportValue ${self:provider.stage}-BelezeiroHttpApiId
+
+  # Environment variables
+  environment:
+    STAGE: ${self:provider.stage}
+    JWT_SECRET: ${env:JWT_SECRET}
+    REDIS_URL: ${env:REDIS_URL}
+
+  # IAM Permissions
+  iam:
+    role:
+      statements:
+        # DynamoDB permissions
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+          Resource:
+            - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/belezeiro-${self:provider.stage}-main'
+            - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/belezeiro-${self:provider.stage}-main/index/*'
+
+        # EventBridge permissions
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource:
+            - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/belezeiro-${self:provider.stage}-event-bus'
 
 functions:
-  iam__authenticate-google:
-    handler: lambdas/authenticate-google.handler
+  iam__authenticate-user:
+    handler: lambdas/authenticate-user.handler
     memorySize: 256
     timeout: 10
     events:
       - httpApi:
-          path: /auth/authenticate-google
+          path: /auth/authenticate-user
           method: POST
 
 build:
@@ -25,12 +57,9 @@ build:
     sourcemap: false
     platform: node
     target: node22
-
     treeShaking: true
     keepNames: false
-
     format: esm
-
     external:
       - aws-sdk
 
@@ -44,6 +73,3 @@ package:
     - '!tsconfig.json'
     - '!*.md'
     - '!*.config.*'
-
-plugins:
-  - serverless-dotenv-plugin

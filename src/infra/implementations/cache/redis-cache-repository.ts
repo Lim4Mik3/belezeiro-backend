@@ -25,7 +25,6 @@ export class RedisCacheRepository implements ICacheRepository {
     if (!RedisCacheRepository.client) {
       RedisCacheRepository.client = createClient({
         url: process.env.REDIS_URL,
-        password: process.env.REDIS_PASSWORD,
       });
 
       RedisCacheRepository.client.on("error", (err) => {

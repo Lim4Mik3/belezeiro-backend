@@ -13,6 +13,9 @@ provider:
 
 # Import resource definitions
 resources:
+  # HTTP API Gateway (shared across all modules)
+  - ${file(api-gateway.yml)}
+
   # EventBridge resources
   - ${file(eventbridge.yml)}
 

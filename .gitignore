@@ -12,6 +12,9 @@ build/
 out/
 *.tsbuildinfo
 
+# Serverless Framework
+.serverless/
+
 # Environment variables
 .env
 .env.local
